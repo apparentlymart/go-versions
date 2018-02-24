@@ -2,7 +2,6 @@ package constraints
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 )
 
@@ -67,29 +66,16 @@ func ParseExactVersion(vs string) (VersionSpec, error) {
 	}
 
 	for i, s := range raw.nums {
-		switch s {
-		case "*", "x":
+		switch {
+		case isWildcardNum(s):
 			// Can't use wildcards in an exact specification
-			var which string
-			switch i {
-			case 0:
-				which = "major"
-			case 1:
-				which = "minor"
-			case 2:
-				which = "patch"
-			}
-			return spec, fmt.Errorf("can't use wildcard for %s number; an exact version is required", which)
+			return spec, fmt.Errorf("can't use wildcard for %s number; an exact version is required", rawNumNames[i])
 		}
 	}
 
-	// Since we eliminated the wildcards above, we're guaranteed by the
-	// grammar that our version "nums" can contain only digits.
-	spec.Major.Num, _ = strconv.ParseUint(raw.nums[0], 10, 64)
-	spec.Minor.Num, _ = strconv.ParseUint(raw.nums[1], 10, 64)
-	spec.Patch.Num, _ = strconv.ParseUint(raw.nums[2], 10, 64)
-	spec.Prerelease = raw.pre
-	spec.Metadata = raw.meta
+	// Since we eliminated all of the unconstrained cases above, either by normalizing
+	// or returning an error, we are guaranteed to get constrained numbers here.
+	spec = raw.VersionSpec()
 
 	return spec, nil
 }
