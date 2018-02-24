@@ -107,6 +107,32 @@ func (v Version) Accepted(set Set) bool {
 	return set.Has(v)
 }
 
+// MarshalText is an implementation of encoding.TextMarshaler, allowing versions
+// to be automatically marshalled for text-based serialization formats,
+// including encoding/json.
+//
+// The format used is that returned by String, which can be parsed using
+// ParseVersion.
+func (v Version) MarshalText() (text []byte, err error) {
+	return []byte(v.String()), nil
+}
+
+// UnmarshalText is an implementation of encoding.TextUnmarshaler, allowing
+// versions to be automatically unmarshalled from strings in text-based
+// serialization formats, including encoding/json.
+//
+// The format expected is what is accepted by ParseVersion. Any parser errors
+// are passed on verbatim to the caller.
+func (v *Version) UnmarshalText(text []byte) error {
+	str := string(text)
+	new, err := ParseVersion(str)
+	if err != nil {
+		return err
+	}
+	*v = new
+	return nil
+}
+
 // VersionExtra represents a string containing dot-delimited tokens, as used
 // in the pre-release and build metadata portions of a Semantic Versioning
 // version expression.
