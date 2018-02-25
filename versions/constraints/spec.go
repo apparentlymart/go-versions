@@ -50,6 +50,121 @@ type VersionSpec struct {
 
 func (s VersionSpec) isSpec() {}
 
+// IsExact returns bool if all of the version numbers in the receiver are
+// fully-constrained. This is the same as s.ConstraintDepth() == ConstrainedPatch
+func (s VersionSpec) IsExact() bool {
+	return s.ConstraintDepth() == ConstrainedPatch
+}
+
+// ConstraintDepth returns the constraint depth of the receiver, which is
+// the most specifc version number segment that is exactly constrained.
+//
+// The constraints must be consistent, which means that if a given segment
+// is unconstrained then all of the deeper segments must also be unconstrained.
+// If not, this method will panic. Version specs produced by the parsers in
+// this package are guaranteed to be consistent.
+func (s VersionSpec) ConstraintDepth() ConstraintDepth {
+	if s == (VersionSpec{}) {
+		// zero value is a degenerate case meaning completely unconstrained
+		return Unconstrained
+	}
+
+	switch {
+	case s.Major.Unconstrained:
+		if !(s.Minor.Unconstrained && s.Patch.Unconstrained && s.Prerelease == "" && s.Metadata == "") {
+			panic("inconsistent constraint depth")
+		}
+		return Unconstrained
+	case s.Minor.Unconstrained:
+		if !(s.Patch.Unconstrained && s.Prerelease == "" && s.Metadata == "") {
+			panic("inconsistent constraint depth")
+		}
+		return ConstrainedMajor
+	case s.Patch.Unconstrained:
+		if s.Prerelease != "" || s.Metadata != "" {
+			panic("inconsistent constraint depth")
+		}
+		return ConstrainedMinor
+	default:
+		return ConstrainedPatch
+	}
+}
+
+// ConstraintBounds returns two exact VersionSpecs that represent the upper
+// and lower bounds of the possibly-inexact receiver. If the receiver
+// is already exact then the two bounds are identical and have operator
+// OpEqual. If they are different then the lower bound is OpGreaterThanOrEqual
+// and the upper bound is OpLessThan.
+//
+// As a special case, if the version spec is entirely unconstrained the
+// two bounds will be identical and the zero value of SelectionSpec. For
+// consistency, this result is also returned if the receiver is already
+// the zero value of VersionSpec, since a zero spec represents a lack of
+// constraint.
+//
+// The constraints must be consistent as defined by ConstraintDepth, or this
+// method will panic.
+func (s VersionSpec) ConstraintBounds() (SelectionSpec, SelectionSpec) {
+	switch s.ConstraintDepth() {
+	case Unconstrained:
+		return SelectionSpec{}, SelectionSpec{}
+	case ConstrainedMajor:
+		lowerBound := s.ConstrainToZero()
+		lowerBound.Metadata = ""
+		upperBound := lowerBound
+		upperBound.Major.Num++
+		upperBound.Minor.Num = 0
+		upperBound.Patch.Num = 0
+		upperBound.Prerelease = ""
+		upperBound.Metadata = ""
+		return SelectionSpec{
+				Operator: OpGreaterThanOrEqual,
+				Boundary: lowerBound,
+			}, SelectionSpec{
+				Operator: OpLessThan,
+				Boundary: upperBound,
+			}
+	case ConstrainedMinor:
+		lowerBound := s.ConstrainToZero()
+		lowerBound.Metadata = ""
+		upperBound := lowerBound
+		upperBound.Minor.Num++
+		upperBound.Patch.Num = 0
+		upperBound.Metadata = ""
+		return SelectionSpec{
+				Operator: OpGreaterThanOrEqual,
+				Boundary: lowerBound,
+			}, SelectionSpec{
+				Operator: OpLessThan,
+				Boundary: upperBound,
+			}
+	default:
+		eq := SelectionSpec{
+			Operator: OpEqual,
+			Boundary: s,
+		}
+		return eq, eq
+	}
+}
+
+// ConstrainToZero returns a copy of the receiver with all of its
+// unconstrained numeric segments constrained to zero.
+func (s VersionSpec) ConstrainToZero() VersionSpec {
+	if s.Major.Unconstrained {
+		s.Major.Unconstrained = false
+		s.Major.Num = 0
+	}
+	if s.Minor.Unconstrained {
+		s.Minor.Unconstrained = false
+		s.Minor.Num = 0
+	}
+	if s.Patch.Unconstrained {
+		s.Patch.Unconstrained = false
+		s.Patch.Num = 0
+	}
+	return s
+}
+
 func (s VersionSpec) String() string {
 	var buf bytes.Buffer
 	fmt.Fprintf(&buf, "%s.%s.%s", s.Major, s.Minor, s.Patch)
@@ -64,6 +179,7 @@ func (s VersionSpec) String() string {
 
 type SelectionOp rune
 
+const OpUnconstrained = 0
 const OpGreaterThan = '>'
 const OpLessThan = '<'
 const OpGreaterThanOrEqual = '≥'
@@ -72,7 +188,7 @@ const OpGreaterThanOrEqualMinorOnly = '^'
 const OpLessThanOrEqual = '≤'
 const OpEqual = '='
 const OpNotEqual = '≠'
-const OpWildcards = '*'
+const OpMatch = '*'
 
 type NumConstraint struct {
 	Num           uint64
@@ -86,3 +202,10 @@ func (c NumConstraint) String() string {
 		return strconv.FormatUint(c.Num, 10)
 	}
 }
+
+type ConstraintDepth int
+
+const Unconstrained ConstraintDepth = 0
+const ConstrainedMajor ConstraintDepth = 1
+const ConstrainedMinor ConstraintDepth = 2
+const ConstrainedPatch ConstraintDepth = 3
