@@ -83,7 +83,7 @@ func TestParseRubyStyle(t *testing.T) {
 				Boundary: VersionSpec{
 					Major:      NumConstraint{Num: 1},
 					Minor:      NumConstraint{Num: 0},
-					Patch:      NumConstraint{Unconstrained: true},
+					Patch:      NumConstraint{Num: 0}, // implied by the prerelease tag to ensure constraint consistency
 					Prerelease: "beta2",
 				},
 			},

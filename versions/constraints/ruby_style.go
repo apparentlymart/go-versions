@@ -160,6 +160,17 @@ func parseRubyStyle(str string) (SelectionSpec, string, error) {
 		}
 	}
 
+	if raw.pre != "" || raw.meta != "" {
+		// If either the prerelease or meta portions are set then any unconstrained
+		// segments are implied to be zero in order to guarantee constraint
+		// consistency.
+		for i, s := range raw.nums {
+			if s == "" {
+				raw.nums[i] = "0"
+			}
+		}
+	}
+
 	spec.Boundary = raw.VersionSpec()
 
 	return spec, remain, nil
