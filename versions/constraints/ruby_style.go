@@ -126,6 +126,10 @@ func parseRubyStyle(str string) (SelectionSpec, string, error) {
 		default:
 			spec.Operator = OpGreaterThanOrEqualMinorOnly
 		}
+	case "=<":
+		return spec, remain, fmt.Errorf("invalid constraint operator %q; did you mean \"<=\"?", raw.op)
+	case "=>":
+		return spec, remain, fmt.Errorf("invalid constraint operator %q; did you mean \">=\"?", raw.op)
 	default:
 		return spec, remain, fmt.Errorf("invalid constraint operator %q", raw.op)
 	}

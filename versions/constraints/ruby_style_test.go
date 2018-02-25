@@ -167,6 +167,11 @@ func TestParseRubyStyle(t *testing.T) {
 			``,
 		},
 		{
+			"=> 1.1.1",
+			SelectionSpec{},
+			`invalid constraint operator "=>"; did you mean ">="?`,
+		},
+		{
 			"< 1.1.1",
 			SelectionSpec{
 				Operator: OpLessThan,
@@ -189,6 +194,11 @@ func TestParseRubyStyle(t *testing.T) {
 				},
 			},
 			``,
+		},
+		{
+			"=< 1.1.1",
+			SelectionSpec{},
+			`invalid constraint operator "=<"; did you mean "<="?`,
 		},
 		{
 			"~> 1.1.1",
