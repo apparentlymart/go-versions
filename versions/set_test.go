@@ -94,6 +94,15 @@ func TestSetHas(t *testing.T) {
 			false,
 		},
 		{
+			Union(
+				Only(MustParseVersion("1.0.0")),
+				Only(MustParseVersion("1.1.0")),
+				Only(MustParseVersion("1.2.0")),
+			),
+			MustParseVersion("1.2.0"),
+			true,
+		},
+		{
 			Intersection(
 				AtLeast(MustParseVersion("1.0.0")),
 				OlderThan(MustParseVersion("2.0.0")),
