@@ -24,7 +24,7 @@ func (s setExact) GoString() string {
 			first = v
 			break
 		}
-		return fmt.Sprintf("versions.Exactly(%#v)", first)
+		return fmt.Sprintf("versions.Only(%#v)", first)
 	}
 
 	var buf bytes.Buffer
@@ -42,10 +42,10 @@ func (s setExact) GoString() string {
 	return buf.String()
 }
 
-// ExactVersion returns a version set containing only the given version.
+// Only returns a version set containing only the given version.
 //
 // This function is guaranteed to produce a finite set.
-func Exactly(v Version) Set {
+func Only(v Version) Set {
 	return Set{
 		setI: setExact{v: struct{}{}},
 	}

@@ -18,15 +18,15 @@ func TestMeetingConstraints(t *testing.T) {
 	}{
 		{
 			`1.0.0`,
-			Exactly(MustParseVersion(`1.0.0`)),
+			Only(MustParseVersion(`1.0.0`)),
 		},
 		{
 			`= 1.0.0`,
-			Exactly(MustParseVersion(`1.0.0`)),
+			Only(MustParseVersion(`1.0.0`)),
 		},
 		{
 			`!= 1.0.0`,
-			All.Subtract(Exactly(MustParseVersion(`1.0.0`))),
+			All.Subtract(Only(MustParseVersion(`1.0.0`))),
 		},
 		{
 			`> 1.0.0`,
@@ -79,22 +79,22 @@ func TestMeetingConstraints(t *testing.T) {
 		{
 			`1.0.0, 2.0.0`,
 			Intersection(
-				Exactly(MustParseVersion(`1.0.0`)),
-				Exactly(MustParseVersion(`2.0.0`)),
+				Only(MustParseVersion(`1.0.0`)),
+				Only(MustParseVersion(`2.0.0`)),
 			),
 		},
 		{
 			`1.0.0, 1.0.0`, // redundant
 			Intersection(
-				Exactly(MustParseVersion(`1.0.0`)), // the duplicates don't get optimized away (yet?)
-				Exactly(MustParseVersion(`1.0.0`)), // probably not worth the effort but will test someday
+				Only(MustParseVersion(`1.0.0`)), // the duplicates don't get optimized away (yet?)
+				Only(MustParseVersion(`1.0.0`)), // probably not worth the effort but will test someday
 			),
 		},
 		{
 			`1.0.0, != 1.0.0`, // degenerate empty set
 			Intersection(
-				Exactly(MustParseVersion(`1.0.0`)),
-				All.Subtract(Exactly(MustParseVersion(`1.0.0`))),
+				Only(MustParseVersion(`1.0.0`)),
+				All.Subtract(Only(MustParseVersion(`1.0.0`))),
 			),
 		},
 	}

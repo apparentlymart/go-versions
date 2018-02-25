@@ -51,7 +51,7 @@ func MeetingConstraints(spec constraints.Spec) Set {
 		case constraints.OpUnconstrained:
 			return All
 		case constraints.OpEqual:
-			return Exactly(versionFromExactVersionSpec(lowerBound.Boundary))
+			return Only(versionFromExactVersionSpec(lowerBound.Boundary))
 		default:
 			return AtLeast(
 				versionFromExactVersionSpec(lowerBound.Boundary),
@@ -76,7 +76,7 @@ func MeetingConstraints(spec constraints.Spec) Set {
 			// to match our metadata if it's specified.
 			return MeetingConstraints(ts.Boundary)
 		case constraints.OpEqual, constraints.OpNotEqual:
-			set := Exactly(versionFromExactVersionSpec(lower))
+			set := Only(versionFromExactVersionSpec(lower))
 			if ts.Operator == constraints.OpNotEqual {
 				// We want everything _except_ what's in our set, then.
 				set = All.Subtract(set)

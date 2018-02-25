@@ -14,7 +14,14 @@ type setI interface {
 
 // Has returns true if the given version is a member of the receiving set.
 func (s Set) Has(v Version) bool {
-	// This wrapper is unnecessary because we embed the interface, but
-	// we include it anyway so we can easily hang documentation from it.
+	// The special Unspecified version is excluded as soon as any sort of
+	// constraint is applied, and so the only set it is a member of is
+	// the special All set.
+	if v == Unspecified {
+		return s == All
+	}
+
 	return s.setI.Has(v)
 }
+
+var InitialDevelopment = OlderThan(MustParseVersion("1.0.0"))
