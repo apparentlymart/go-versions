@@ -21,6 +21,20 @@ func (s setIntersection) Has(v Version) bool {
 	return true
 }
 
+func (s setIntersection) AllRequested() Set {
+	// The requested set for an intersection is the union of all of its
+	// members requested sets intersection the receiver. Therefore we'll
+	// borrow the same logic from setUnion's implementation here but
+	// then wrap it up in a setIntersection before we return.
+
+	asUnion := setUnion(s)
+	ar := asUnion.AllRequested()
+	si := make(setIntersection, len(s)+1)
+	si[0] = ar.setI
+	copy(si[1:], s)
+	return Set{setI: si}
+}
+
 func (s setIntersection) GoString() string {
 	var buf bytes.Buffer
 	fmt.Fprint(&buf, "versions.Intersection(")
@@ -49,13 +63,18 @@ func Intersection(sets ...Set) Set {
 		if set == All {
 			continue
 		}
+		if set == None {
+			return None
+		}
 		if su, ok := set.setI.(setIntersection); ok {
 			r = append(r, su...)
 		} else {
 			r = append(r, set.setI)
 		}
 	}
-
+	if len(r) == 1 {
+		return Set{setI: r[0]}
+	}
 	return Set{setI: r}
 }
 
@@ -68,14 +87,20 @@ func (s Set) Intersection(others ...Set) Set {
 	r := make(setIntersection, 1, len(others)+1)
 	r[0] = s.setI
 	for _, ss := range others {
-		if ss.setI == All {
+		if ss == All {
 			continue
+		}
+		if ss == None {
+			return None
 		}
 		if su, ok := ss.setI.(setIntersection); ok {
 			r = append(r, su...)
 		} else {
 			r = append(r, ss.setI)
 		}
+	}
+	if len(r) == 1 {
+		return Set{setI: r[0]}
 	}
 	return Set{setI: r}
 }

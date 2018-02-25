@@ -12,6 +12,11 @@ func (s setExtreme) Has(v Version) bool {
 	return bool(s)
 }
 
+func (s setExtreme) AllRequested() Set {
+	// The extreme sets request nothing.
+	return None
+}
+
 func (s setExtreme) GoString() string {
 	switch bool(s) {
 	case true:

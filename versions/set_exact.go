@@ -12,6 +12,12 @@ func (s setExact) Has(v Version) bool {
 	return has
 }
 
+func (s setExact) AllRequested() Set {
+	// We just return the receiver verbatim here, because everything in it
+	// is explicitly requested.
+	return Set{setI: s}
+}
+
 func (s setExact) GoString() string {
 	if len(s) == 0 {
 		// Degenerate case; caller should use None instead
@@ -77,22 +83,6 @@ func (s Set) Exactly(v Version) bool {
 		return false
 	}
 	return v.Same(l[0])
-}
-
-// Selects returns true if and only if the receiving set is finite and
-// one of its selected versions is the given version. This is a weaker
-// version of Exactly that allows the given version to be one of many
-// exact versions.
-func (s Set) Selects(v Version) bool {
-	if !s.IsFinite() {
-		return false
-	}
-	for _, pv := range s.List() {
-		if v.Same(pv) {
-			return true
-		}
-	}
-	return false
 }
 
 var _ setFinite = setExact(nil)

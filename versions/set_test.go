@@ -144,6 +144,60 @@ func TestSetHas(t *testing.T) {
 			true,
 		},
 		{
+			All.Subtract(Only(MustParseVersion("0.9.0"))),
+			MustParseVersion("0.9.1"),
+			true,
+		},
+		{
+			Union(
+				All,
+				Only(MustParseVersion("1.0.1")),
+			).AllRequested(),
+			MustParseVersion("1.0.1"),
+			true,
+		},
+		{
+			Union(
+				All,
+				Only(MustParseVersion("1.0.1")),
+			).AllRequested(),
+			MustParseVersion("1.0.2"),
+			false,
+		},
+		{
+			Intersection(
+				All,
+				Only(MustParseVersion("1.0.1")),
+			).AllRequested(),
+			MustParseVersion("1.0.1"),
+			true,
+		},
+		{
+			Intersection(
+				All,
+				Only(MustParseVersion("1.0.1")),
+			).AllRequested(),
+			MustParseVersion("1.0.2"),
+			false,
+		},
+		{
+			Intersection(
+				AtLeast(MustParseVersion("2.0.0")),
+				Only(MustParseVersion("1.0.1")),
+			).AllRequested(),
+			MustParseVersion("1.0.1"),
+			false,
+		},
+		{
+			Only(
+				MustParseVersion("1.0.1"),
+			).Subtract(
+				AtLeast(MustParseVersion("1.0.0")),
+			).AllRequested(),
+			MustParseVersion("1.0.1"),
+			false,
+		},
+		{
 			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
 			MustParseVersion("1.0.0"),
 			true,
@@ -164,22 +218,47 @@ func TestSetHas(t *testing.T) {
 			true,
 		},
 		{
-			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).AllRequested(),
 			MustParseVersion("0.0.1"),
 			false,
 		},
 		{
-			MustMakeSet(RequestedByRubyStyleConstraints(">= 1.0.0")),
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).AllRequested(),
 			MustParseVersion("1.0.0-beta1"),
 			false,
 		},
 		{
-			MustMakeSet(RequestedByRubyStyleConstraints(">= 1.0.0")),
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).AllRequested(),
 			MustParseVersion("2.0.0-beta1"),
 			false,
 		},
 		{
-			MustMakeSet(RequestedByRubyStyleConstraints("2.0.0-beta1")),
+			MustMakeSet(MeetingRubyStyleConstraints("2.0.0-beta1")).AllRequested(),
+			MustParseVersion("2.0.0-beta1"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).WithoutUnrequestedPrereleases(),
+			MustParseVersion("0.0.1"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).WithoutUnrequestedPrereleases(),
+			MustParseVersion("1.0.0"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).WithoutUnrequestedPrereleases(),
+			MustParseVersion("1.0.0-beta1"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")).WithoutUnrequestedPrereleases(),
+			MustParseVersion("2.0.0-beta1"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints("2.0.0-beta1")).WithoutUnrequestedPrereleases(),
 			MustParseVersion("2.0.0-beta1"),
 			true,
 		},

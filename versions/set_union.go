@@ -16,6 +16,26 @@ func (s setUnion) Has(v Version) bool {
 	return false
 }
 
+func (s setUnion) AllRequested() Set {
+	// Since a union includes everything from its members, it includes all
+	// of the requested versions from its members too.
+	if len(s) == 0 {
+		return None
+	}
+	si := make(setUnion, 0, len(s))
+	for _, ss := range s {
+		ar := ss.AllRequested()
+		if ar == None {
+			continue
+		}
+		si = append(si, ar.setI)
+	}
+	if len(si) == 1 {
+		return Set{setI: si[0]}
+	}
+	return Set{setI: si}
+}
+
 func (s setUnion) GoString() string {
 	var buf bytes.Buffer
 	fmt.Fprint(&buf, "versions.Union(")
@@ -50,7 +70,9 @@ func Union(sets ...Set) Set {
 			r = append(r, set.setI)
 		}
 	}
-
+	if len(r) == 1 {
+		return Set{setI: r[0]}
+	}
 	return Set{setI: r}
 }
 
@@ -63,7 +85,7 @@ func (s Set) Union(others ...Set) Set {
 	r := make(setUnion, 1, len(others)+1)
 	r[0] = s.setI
 	for _, ss := range others {
-		if ss.setI == None {
+		if ss == None {
 			continue
 		}
 		if su, ok := ss.setI.(setUnion); ok {
@@ -71,6 +93,9 @@ func (s Set) Union(others ...Set) Set {
 		} else {
 			r = append(r, ss.setI)
 		}
+	}
+	if len(r) == 1 {
+		return Set{setI: r[0]}
 	}
 	return Set{setI: r}
 }

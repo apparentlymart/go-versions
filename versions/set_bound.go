@@ -25,6 +25,11 @@ func (s setBound) Has(v Version) bool {
 	}
 }
 
+func (s setBound) AllRequested() Set {
+	// Inequalities request nothing.
+	return None
+}
+
 func (s setBound) GoString() string {
 	switch s.op {
 	case setBoundGT:

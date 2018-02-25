@@ -146,30 +146,6 @@ func MeetingConstraints(spec constraints.Spec) Set {
 	}
 }
 
-// RequestedByConstraints is a more opinionated version of MeetingConstraints
-// which applies some logic to ensure that prerelease versions are included
-// only if explicitly requested.
-//
-// In practice this means that the returned set is the intersection of the
-// spec constraints with the predefined set Released, with the extra special
-// case that if the constraints are a finite set requesting a particular
-// prerelease version then that exact version is also included.
-func RequestedByConstraints(spec constraints.Spec) Set {
-	requested := MeetingConstraints(spec)
-	set := Released
-	set = set.Intersection(requested)
-
-	if requested.IsFinite() {
-		for _, version := range requested.List() {
-			if version.Prerelease != "" {
-				set = set.Union(Only(version))
-			}
-		}
-	}
-
-	return set
-}
-
 // MeetingRubyStyleConstraints attempts to parse the given spec as a
 // "Ruby-style" version constraint string, and returns the set of versions
 // that match the constraint if successful.
@@ -193,16 +169,6 @@ func MeetingRubyStyleConstraints(spec string) (Set, error) {
 		return None, err
 	}
 	return MeetingConstraints(s), nil
-}
-
-// RequestedByRubyStyleConstraints is like MeetingRubyStyleConstraints but it
-// applies the extra logic described for RequestedByConstraints.
-func RequestedByRubyStyleConstraints(spec string) (Set, error) {
-	s, err := constraints.ParseRubyStyleMulti(spec)
-	if err != nil {
-		return None, err
-	}
-	return RequestedByConstraints(s), nil
 }
 
 // MustMakeSet can be used to wrap any function that returns a set and an error

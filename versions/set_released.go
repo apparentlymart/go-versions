@@ -6,6 +6,11 @@ func (s setReleased) Has(v Version) bool {
 	return v.Prerelease == ""
 }
 
+func (s setReleased) AllRequested() Set {
+	// The set of all released versions requests nothing.
+	return None
+}
+
 func (s setReleased) GoString() string {
 	return "versions.Released"
 }

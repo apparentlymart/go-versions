@@ -11,6 +11,14 @@ func (s setSubtract) Has(v Version) bool {
 	return s.from.Has(v) && !s.sub.Has(v)
 }
 
+func (s setSubtract) AllRequested() Set {
+	// Our set requests anything that is requested by "from", unless it'd
+	// be excluded by "sub". Notice that the whole of "sub" is used, rather
+	// than just the requested parts, because requesting is a positive
+	// action only.
+	return Set{setI: s.from}.AllRequested().Subtract(Set{setI: s.sub})
+}
+
 func (s setSubtract) GoString() string {
 	return fmt.Sprintf("(%#v).Subtract(%#v)", s.from, s.sub)
 }
