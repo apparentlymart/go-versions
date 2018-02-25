@@ -12,6 +12,17 @@ func (s setExtreme) Has(v Version) bool {
 	return bool(s)
 }
 
+func (s setExtreme) GoString() string {
+	switch bool(s) {
+	case true:
+		return "versions.All"
+	case false:
+		return "versions.None"
+	default:
+		panic("strange new boolean value")
+	}
+}
+
 var _ setFinite = setExtreme(false)
 
 func (s setExtreme) isFinite() bool {

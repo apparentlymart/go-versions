@@ -1,5 +1,10 @@
 package versions
 
+import (
+	"bytes"
+	"fmt"
+)
+
 type setUnion []setI
 
 func (s setUnion) Has(v Version) bool {
@@ -9,6 +14,44 @@ func (s setUnion) Has(v Version) bool {
 		}
 	}
 	return false
+}
+
+func (s setUnion) GoString() string {
+	var buf bytes.Buffer
+	fmt.Fprint(&buf, "versions.Union(")
+	for i, ss := range s {
+		if i == 0 {
+			fmt.Fprint(&buf, ss.GoString())
+		} else {
+			fmt.Fprintf(&buf, ", %#v", ss)
+		}
+	}
+	fmt.Fprint(&buf, ")")
+	return buf.String()
+}
+
+// Union creates a new set that contains all of the given versions.
+//
+// The result is finite only if the receiver and all of the other given sets
+// are finite.
+func Union(sets ...Set) Set {
+	if len(sets) == 0 {
+		return None
+	}
+
+	r := make(setUnion, 0, len(sets))
+	for _, set := range sets {
+		if set == None {
+			continue
+		}
+		if su, ok := set.setI.(setUnion); ok {
+			r = append(r, su...)
+		} else {
+			r = append(r, set.setI)
+		}
+	}
+
+	return Set{setI: r}
 }
 
 // Union returns a new set that contains all of the versions from the

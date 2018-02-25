@@ -1,10 +1,45 @@
 package versions
 
+import (
+	"bytes"
+	"fmt"
+)
+
 type setExact map[Version]struct{}
 
 func (s setExact) Has(v Version) bool {
 	_, has := s[v]
 	return has
+}
+
+func (s setExact) GoString() string {
+	if len(s) == 0 {
+		// Degenerate case; caller should use None instead
+		return "versions.Set{setExact{}}"
+	}
+
+	if len(s) == 1 {
+		var first Version
+		for v := range s {
+			first = v
+			break
+		}
+		return fmt.Sprintf("versions.Exactly(%#v)", first)
+	}
+
+	var buf bytes.Buffer
+	fmt.Fprint(&buf, "versions.Selection(")
+	versions := s.listVersions()
+	versions.Sort()
+	for i, version := range versions {
+		if i == 0 {
+			fmt.Fprint(&buf, version.GoString())
+		} else {
+			fmt.Fprintf(&buf, ", %#v", version)
+		}
+	}
+	fmt.Fprint(&buf, ")")
+	return buf.String()
 }
 
 // ExactVersion returns a version set containing only the given version.
@@ -21,6 +56,9 @@ func Exactly(v Version) Set {
 //
 // This function is guaranteed to produce a finite set.
 func Selection(vs ...Version) Set {
+	if len(vs) == 0 {
+		return None
+	}
 	ret := make(setExact)
 	for _, v := range vs {
 		ret[v] = struct{}{}

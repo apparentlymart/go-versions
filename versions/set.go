@@ -9,6 +9,7 @@ type Set struct {
 // operators.
 type setI interface {
 	Has(v Version) bool
+	GoString() string
 }
 
 // Has returns true if the given version is a member of the receiving set.

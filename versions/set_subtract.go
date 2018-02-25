@@ -1,5 +1,7 @@
 package versions
 
+import "fmt"
+
 type setSubtract struct {
 	from setI
 	sub  setI
@@ -7,6 +9,10 @@ type setSubtract struct {
 
 func (s setSubtract) Has(v Version) bool {
 	return s.from.Has(v) && !s.sub.Has(v)
+}
+
+func (s setSubtract) GoString() string {
+	return fmt.Sprintf("(%#v).Subtract(%#v)", s.from, s.sub)
 }
 
 // Subtract returns a new set that has all of the versions from the receiver

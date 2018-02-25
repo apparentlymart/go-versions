@@ -1,5 +1,10 @@
 package versions
 
+import (
+	"bytes"
+	"fmt"
+)
+
 type setIntersection []setI
 
 func (s setIntersection) Has(v Version) bool {
@@ -14,6 +19,44 @@ func (s setIntersection) Has(v Version) bool {
 		}
 	}
 	return true
+}
+
+func (s setIntersection) GoString() string {
+	var buf bytes.Buffer
+	fmt.Fprint(&buf, "versions.Intersection(")
+	for i, ss := range s {
+		if i == 0 {
+			fmt.Fprint(&buf, ss.GoString())
+		} else {
+			fmt.Fprintf(&buf, ", %#v", ss)
+		}
+	}
+	fmt.Fprint(&buf, ")")
+	return buf.String()
+}
+
+// Intersection creates a new set that contains the versions that all of the
+// given sets have in common.
+//
+// The result is finite if any of the given sets are finite.
+func Intersection(sets ...Set) Set {
+	if len(sets) == 0 {
+		return None
+	}
+
+	r := make(setIntersection, 0, len(sets))
+	for _, set := range sets {
+		if set == All {
+			continue
+		}
+		if su, ok := set.setI.(setIntersection); ok {
+			r = append(r, su...)
+		} else {
+			r = append(r, set.setI)
+		}
+	}
+
+	return Set{setI: r}
 }
 
 // Intersection returns a new set that contains all of the versions that

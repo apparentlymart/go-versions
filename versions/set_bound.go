@@ -1,5 +1,9 @@
 package versions
 
+import (
+	"fmt"
+)
+
 type setBound struct {
 	v  Version
 	op setBoundOp
@@ -18,6 +22,22 @@ func (s setBound) Has(v Version) bool {
 	default:
 		// Should never happen because the above is exhaustive
 		panic("invalid setBound operator")
+	}
+}
+
+func (s setBound) GoString() string {
+	switch s.op {
+	case setBoundGT:
+		return fmt.Sprintf("versions.NewerThan(%#v)", s.v)
+	case setBoundGTE:
+		return fmt.Sprintf("versions.AtLeast(%#v)", s.v)
+	case setBoundLT:
+		return fmt.Sprintf("versions.OlderThan(%#v)", s.v)
+	case setBoundLTE:
+		return fmt.Sprintf("versions.AtMost(%#v)", s.v)
+	default:
+		// Should never happen because the above is exhaustive
+		return fmt.Sprintf("versions.Set{versions.setBound{v:%#v,op:%#v}}", s.v, s.op)
 	}
 }
 
