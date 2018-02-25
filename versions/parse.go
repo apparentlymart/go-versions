@@ -146,6 +146,43 @@ func MeetingConstraints(spec constraints.Spec) Set {
 	}
 }
 
+// MeetingRubyStyleConstraints attempts to parse the given spec as a
+// "Ruby-style" version constraint string, and returns the set of versions
+// that match the constraint if successful.
+//
+// If unsuccessful, the error from the underlying parser is returned verbatim.
+// Parser errors are suitable for showing to an end-user in situations where
+// the given spec came from user input.
+//
+// "Ruby-style" here is not a promise of exact compatibility with rubygems
+// or any other Ruby tools. Rather, it refers to this parser using a syntax
+// that is intended to feel familiar to those who are familiar with rubygems
+// syntax.
+//
+// Constraints are parsed in "multi" mode, allowing multiple comma-separated
+// constraints that are combined with the Intersection operator. For more
+// control over the parsing process, use the constraints package API directly
+// and then call MeetingConstraints.
+func MeetingRubyStyleConstraints(spec string) (Set, error) {
+	s, err := constraints.ParseRubyStyleMulti(spec)
+	if err != nil {
+		return None, err
+	}
+	return MeetingConstraints(s), nil
+}
+
+// MeetingRubyStyleConstraintsMustParse is an awfully-named method that wraps
+// MeetingRubyStyleConstraints and panics if it returns an error, for more
+// convenient use in tests and other situations where the spec string is
+// a known-good constant.
+func MeetingRubyStyleConstraintsMustParse(spec string) Set {
+	set, err := MeetingRubyStyleConstraints(spec)
+	if err != nil {
+		panic(err)
+	}
+	return set
+}
+
 func versionFromExactVersionSpec(spec constraints.VersionSpec) Version {
 	return Version{
 		Major:      spec.Major.Num,

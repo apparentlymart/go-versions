@@ -5,8 +5,6 @@ import (
 	"testing"
 
 	"github.com/davecgh/go-spew/spew"
-
-	"github.com/apparentlymart/go-versions/versions/constraints"
 )
 
 func TestMeetingConstraints(t *testing.T) {
@@ -103,12 +101,11 @@ func TestMeetingConstraints(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.Input, func(t *testing.T) {
-			spec, err := constraints.ParseRubyStyleMulti(test.Input)
+			got, err := MeetingRubyStyleConstraints(test.Input)
 			if err != nil {
 				t.Fatal(err)
 			}
 
-			got := MeetingConstraints(spec)
 			if !reflect.DeepEqual(got, test.Want) {
 				gotStr := got.GoString()
 				wantStr := test.Want.GoString()
