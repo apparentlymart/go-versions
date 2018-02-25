@@ -11,6 +11,7 @@ var _ setI = setExtreme(true)
 var _ setI = setIntersection{}
 var _ setI = setSubtract{}
 var _ setI = setUnion{}
+var _ setI = setReleased{}
 
 func TestSetHas(t *testing.T) {
 	tests := []struct {
@@ -47,6 +48,26 @@ func TestSetHas(t *testing.T) {
 			InitialDevelopment,
 			MustParseVersion("1.0.0"),
 			false,
+		},
+		{
+			Released,
+			MustParseVersion("1.0.0"),
+			true,
+		},
+		{
+			Released,
+			MustParseVersion("1.0.0-beta1"),
+			false,
+		},
+		{
+			Prerelease,
+			MustParseVersion("1.0.0"),
+			false,
+		},
+		{
+			Prerelease,
+			MustParseVersion("1.0.0-beta1"),
+			true,
 		},
 		{
 			Union(
@@ -120,6 +141,46 @@ func TestSetHas(t *testing.T) {
 		{
 			All.Subtract(Only(MustParseVersion("0.9.0"))),
 			MustParseVersion("0.9.1"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("1.0.0"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("1.0.0-beta1"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("2.0.0-beta1"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("1.0.1"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("0.0.1"),
+			false,
+		},
+		{
+			MustMakeSet(RequestedByRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("1.0.0-beta1"),
+			false,
+		},
+		{
+			MustMakeSet(RequestedByRubyStyleConstraints(">= 1.0.0")),
+			MustParseVersion("2.0.0-beta1"),
+			false,
+		},
+		{
+			MustMakeSet(RequestedByRubyStyleConstraints("2.0.0-beta1")),
+			MustParseVersion("2.0.0-beta1"),
 			true,
 		},
 	}

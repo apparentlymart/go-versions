@@ -68,6 +68,12 @@ func (v Version) LessThan(other Version) bool {
 	case v.Patch != other.Patch:
 		return v.Patch < other.Patch
 	case v.Prerelease != other.Prerelease:
+		if v.Prerelease == "" {
+			return false
+		}
+		if other.Prerelease == "" {
+			return true
+		}
 		return v.Prerelease.LessThan(other.Prerelease)
 	default:
 		return false
@@ -85,26 +91,16 @@ func (v Version) GreaterThan(other Version) bool {
 	case v.Patch != other.Patch:
 		return v.Patch > other.Patch
 	case v.Prerelease != other.Prerelease:
+		if v.Prerelease == "" {
+			return true
+		}
+		if other.Prerelease == "" {
+			return false
+		}
 		return !v.Prerelease.LessThan(other.Prerelease)
 	default:
 		return false
 	}
-}
-
-// Accepted returns true if the receiver is accepted by the given version set.
-// This is an opinionated method that has handles pre-release versions in a
-// special way: whereas normal versions are accepted just by being in the
-// set, pre-release versions can be selected only by being explicitly
-// requested in a finite set.
-//
-// This behavior is suggested because pre-release versions don't necessarily
-// follow the semantic versioning contract and so it is generally undesirable
-// to have them implicitly selected for installation.
-func (v Version) Accepted(set Set) bool {
-	if v.Prerelease != "" {
-		return set.Selects(v)
-	}
-	return set.Has(v)
 }
 
 // MarshalText is an implementation of encoding.TextMarshaler, allowing versions
