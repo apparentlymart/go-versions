@@ -1,6 +1,8 @@
 package versions
 
 import (
+	"encoding/json"
+	"reflect"
 	"testing"
 )
 
@@ -291,5 +293,29 @@ func TestSetHas(t *testing.T) {
 				)
 			}
 		})
+	}
+}
+
+func TestSetJSON(t *testing.T) {
+	j := []byte(`"^1 || 2.0.0"`)
+	var got Set
+	err := json.Unmarshal(j, &got)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	want := Intersection(
+		Released,
+		Union(
+			Intersection(
+				AtLeast(MustParseVersion("1.0.0")),
+				OlderThan(MustParseVersion("2.0.0")),
+			),
+			Only(MustParseVersion("2.0.0")),
+		),
+	)
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("wrong result\ngot:  %#v\nwant :%#v", got, want)
 	}
 }

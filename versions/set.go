@@ -70,4 +70,20 @@ func (s Set) WithoutUnrequestedPrereleases() Set {
 	return Union(s.AllRequested(), Released.Intersection(s))
 }
 
+// UnmarshalText is an implementation of encoding.TextUnmarshaler, allowing
+// sets to be automatically unmarshalled from strings in text-based
+// serialization formats, including encoding/json.
+//
+// The format expected is what is accepted by MeetingConstraintsString. Any
+// parser errors are passed on verbatim to the caller.
+func (s *Set) UnmarshalText(text []byte) error {
+	str := string(text)
+	new, err := MeetingConstraintsString(str)
+	if err != nil {
+		return err
+	}
+	*s = new
+	return nil
+}
+
 var InitialDevelopment = OlderThan(MustParseVersion("1.0.0"))
