@@ -86,4 +86,4 @@ func (s *Set) UnmarshalText(text []byte) error {
 	return nil
 }
 
-var InitialDevelopment = OlderThan(MustParseVersion("1.0.0"))
+var InitialDevelopment Set = OlderThan(MustParseVersion("1.0.0"))
