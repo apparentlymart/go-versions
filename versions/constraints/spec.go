@@ -82,7 +82,7 @@ func (s VersionSpec) ConstraintDepth() ConstraintDepth {
 		return ConstrainedMajor
 	case s.Patch.Unconstrained:
 		if s.Prerelease != "" || s.Metadata != "" {
-			panic("inconsistent constraint depth")
+			panic(fmt.Errorf("inconsistent constraint depth: wildcard major, minor and patch followed by prerelease %q and metadata %q", s.Prerelease, s.Metadata))
 		}
 		return ConstrainedMinor
 	default:
@@ -150,17 +150,47 @@ func (s VersionSpec) ConstraintBounds() (SelectionSpec, SelectionSpec) {
 // ConstrainToZero returns a copy of the receiver with all of its
 // unconstrained numeric segments constrained to zero.
 func (s VersionSpec) ConstrainToZero() VersionSpec {
-	if s.Major.Unconstrained {
-		s.Major.Unconstrained = false
-		s.Major.Num = 0
+	switch s.ConstraintDepth() {
+	case Unconstrained:
+		s.Major = NumConstraint{Num: 0}
+		s.Minor = NumConstraint{Num: 0}
+		s.Patch = NumConstraint{Num: 0}
+		s.Prerelease = ""
+		s.Metadata = ""
+	case ConstrainedMajor:
+		s.Minor = NumConstraint{Num: 0}
+		s.Patch = NumConstraint{Num: 0}
+		s.Prerelease = ""
+		s.Metadata = ""
+	case ConstrainedMinor:
+		s.Patch = NumConstraint{Num: 0}
+		s.Prerelease = ""
+		s.Metadata = ""
 	}
-	if s.Minor.Unconstrained {
-		s.Minor.Unconstrained = false
-		s.Minor.Num = 0
-	}
-	if s.Patch.Unconstrained {
-		s.Patch.Unconstrained = false
-		s.Patch.Num = 0
+	return s
+}
+
+// ConstrainToUpperBound returns a copy of the receiver with all of its
+// unconstrained numeric segments constrained to zero and its last
+// constrained segment increased by one.
+//
+// This operation is not meaningful for an entirely unconstrained VersionSpec,
+// so will return the zero value of the type in that case.
+func (s VersionSpec) ConstrainToUpperBound() VersionSpec {
+	switch s.ConstraintDepth() {
+	case Unconstrained:
+		return VersionSpec{}
+	case ConstrainedMajor:
+		s.Major.Num++
+		s.Minor = NumConstraint{Num: 0}
+		s.Patch = NumConstraint{Num: 0}
+		s.Prerelease = ""
+		s.Metadata = ""
+	case ConstrainedMinor:
+		s.Minor.Num++
+		s.Patch = NumConstraint{Num: 0}
+		s.Prerelease = ""
+		s.Metadata = ""
 	}
 	return s
 }
