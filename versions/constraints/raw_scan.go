@@ -60,6 +60,8 @@ func scanConstraint(data string) (rawConstraint, string) {
 				goto tr2
 			case 46:
 				goto tr3
+			case 88:
+				goto tr2
 			case 120:
 				goto tr2
 			}
@@ -89,6 +91,8 @@ func scanConstraint(data string) (rawConstraint, string) {
 				goto tr7
 			case 46:
 				goto tr3
+			case 88:
+				goto tr7
 			case 120:
 				goto tr7
 			}
@@ -115,6 +119,8 @@ func scanConstraint(data string) (rawConstraint, string) {
 			case 32:
 				goto tr10
 			case 42:
+				goto tr11
+			case 88:
 				goto tr11
 			case 120:
 				goto tr11
@@ -222,6 +228,8 @@ func scanConstraint(data string) (rawConstraint, string) {
 		case 6:
 			switch data[p] {
 			case 42:
+				goto tr16
+			case 88:
 				goto tr16
 			case 120:
 				goto tr16
@@ -600,7 +608,7 @@ func scanConstraint(data string) (rawConstraint, string) {
 
 				extra = data[p:]
 
-				// line 602 "raw_scan.go"
+				// line 610 "raw_scan.go"
 			}
 		}
 

@@ -72,7 +72,7 @@ func scanConstraint(data string) (rawConstraint, string) {
 			extra = data[p:]
 		}
 
-		num = (digit+ | '*' | 'x') >ts %finishNum %err(finishNum) %eof(finishNum);
+		num = (digit+ | '*' | 'x' | 'X') >ts %finishNum %err(finishNum) %eof(finishNum);
 
 		op = ((any - (digit | space | alpha | '.' | '*'))**) >ts %finishOp %err(finishOp) %eof(finishOp);
 		likelyOp = ('^' | '>' | '<' | '-' | '~' | '!');
