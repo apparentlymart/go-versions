@@ -28,16 +28,16 @@ func (s setSubtract) GoString() string {
 //
 // If the receiver is finite then the returned set is also finite.
 func (s Set) Subtract(other Set) Set {
-	if other.setI == None || s.setI == None {
+	if other == None || s == None {
 		return s
 	}
-	if other.setI == All {
+	if other == All {
 		return None
 	}
 	return Set{
 		setI: setSubtract{
-			from: s,
-			sub:  other,
+			from: s.setI,
+			sub:  other.setI,
 		},
 	}
 }
