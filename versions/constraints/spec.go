@@ -209,16 +209,20 @@ func (s VersionSpec) String() string {
 
 type SelectionOp rune
 
-const OpUnconstrained = 0
-const OpGreaterThan = '>'
-const OpLessThan = '<'
-const OpGreaterThanOrEqual = '≥'
-const OpGreaterThanOrEqualPatchOnly = '~'
-const OpGreaterThanOrEqualMinorOnly = '^'
-const OpLessThanOrEqual = '≤'
-const OpEqual = '='
-const OpNotEqual = '≠'
-const OpMatch = '*'
+//go:generate stringer -type SelectionOp
+
+const (
+	OpUnconstrained               SelectionOp = 0
+	OpGreaterThan                 SelectionOp = '>'
+	OpLessThan                    SelectionOp = '<'
+	OpGreaterThanOrEqual          SelectionOp = '≥'
+	OpGreaterThanOrEqualPatchOnly SelectionOp = '~'
+	OpGreaterThanOrEqualMinorOnly SelectionOp = '^'
+	OpLessThanOrEqual             SelectionOp = '≤'
+	OpEqual                       SelectionOp = '='
+	OpNotEqual                    SelectionOp = '≠'
+	OpMatch                       SelectionOp = '*'
+)
 
 type NumConstraint struct {
 	Num           uint64
@@ -235,7 +239,11 @@ func (c NumConstraint) String() string {
 
 type ConstraintDepth int
 
-const Unconstrained ConstraintDepth = 0
-const ConstrainedMajor ConstraintDepth = 1
-const ConstrainedMinor ConstraintDepth = 2
-const ConstrainedPatch ConstraintDepth = 3
+//go:generate stringer -type ConstraintDepth
+
+const (
+	Unconstrained    ConstraintDepth = 0
+	ConstrainedMajor ConstraintDepth = 1
+	ConstrainedMinor ConstraintDepth = 2
+	ConstrainedPatch ConstraintDepth = 3
+)
