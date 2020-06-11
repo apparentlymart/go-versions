@@ -1,5 +1,7 @@
 module github.com/apparentlymart/go-versions
 
+go 1.14
+
 require (
 	github.com/davecgh/go-spew v1.1.0
 	github.com/go-test/deep v1.0.1
