@@ -155,6 +155,18 @@ func TestParseRubyStyle(t *testing.T) {
 			``,
 		},
 		{
+			">1.1.1",
+			SelectionSpec{
+				Operator: OpGreaterThan,
+				Boundary: VersionSpec{
+					Major: NumConstraint{Num: 1},
+					Minor: NumConstraint{Num: 1},
+					Patch: NumConstraint{Num: 1},
+				},
+			},
+			``,
+		},
+		{
 			">= 1.1.1",
 			SelectionSpec{
 				Operator: OpGreaterThanOrEqual,
@@ -167,7 +179,24 @@ func TestParseRubyStyle(t *testing.T) {
 			``,
 		},
 		{
+			">=1.1.1",
+			SelectionSpec{
+				Operator: OpGreaterThanOrEqual,
+				Boundary: VersionSpec{
+					Major: NumConstraint{Num: 1},
+					Minor: NumConstraint{Num: 1},
+					Patch: NumConstraint{Num: 1},
+				},
+			},
+			``,
+		},
+		{
 			"=> 1.1.1",
+			SelectionSpec{},
+			`invalid constraint operator "=>"; did you mean ">="?`,
+		},
+		{
+			"=>1.1.1",
 			SelectionSpec{},
 			`invalid constraint operator "=>"; did you mean ">="?`,
 		},
@@ -259,11 +288,6 @@ func TestParseRubyStyle(t *testing.T) {
 				},
 			},
 			``,
-		},
-		{
-			"=1.1.1",
-			SelectionSpec{},
-			`a space separator is required after the operator "="`,
 		},
 		{
 			"=  1.1.1",
