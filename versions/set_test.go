@@ -278,6 +278,61 @@ func TestSetHas(t *testing.T) {
 			MustParseVersion("2.0.0-beta1"),
 			true,
 		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2.3")),
+			MustParseVersion("1.2.3"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2.3")),
+			MustParseVersion("1.2.5"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2.3")),
+			MustParseVersion("1.3.0"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2")),
+			MustParseVersion("1.2.3"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2")),
+			MustParseVersion("1.2.5"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2")),
+			MustParseVersion("1.3.0"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1.2")),
+			MustParseVersion("2.0.0"),
+			false,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1")),
+			MustParseVersion("1.2.3"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1")),
+			MustParseVersion("1.2.5"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1")),
+			MustParseVersion("1.3.0"),
+			true,
+		},
+		{
+			MustMakeSet(MeetingConstraintsStringRuby("~> 1")),
+			MustParseVersion("2.0.0"),
+			false,
+		},
 	}
 
 	for _, test := range tests {
