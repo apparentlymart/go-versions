@@ -379,6 +379,11 @@ func TestParseRubyStyleMulti(t *testing.T) {
 			"",
 		},
 		{
+			"~> v1.1.1",
+			nil,
+			`a "v" prefix should not be used`,
+		},
+		{
 			">= 1.0, < 2",
 			IntersectionSpec{
 				SelectionSpec{
