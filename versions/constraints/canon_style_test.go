@@ -3,7 +3,6 @@ package constraints
 import (
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/go-test/deep"
 )
 
@@ -668,8 +667,8 @@ func TestParse(t *testing.T) {
 				return
 			}
 
-			t.Logf("got: %s", spew.Sdump(got))
-			t.Logf("want: %s", spew.Sdump(test.Want))
+			t.Logf("got: %+v", got)
+			t.Logf("want: %+v", test.Want)
 
 			for _, problem := range deep.Equal(got, test.Want) {
 				t.Error(problem)
