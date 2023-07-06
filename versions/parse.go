@@ -49,7 +49,7 @@ func MeetingConstraints(spec constraints.Spec) Set {
 	exact := MeetingConstraintsExact(spec)
 	reqd := exact.AllRequested().List()
 	set := Intersection(Released, exact)
-	reqd = reqd.Filter(Prerelease)
+	reqd = reqd.Filter(Prerelease).Filter(exact)
 	if len(reqd) != 0 {
 		set = Union(Selection(reqd...), set)
 	}

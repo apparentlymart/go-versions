@@ -229,6 +229,11 @@ func TestSetHas(t *testing.T) {
 			true,
 		},
 		{
+			MustMakeSet(MeetingConstraintsStringRuby("!= 2.0.0-beta1, 2.0.0-beta1")),
+			MustParseVersion("2.0.0-beta1"),
+			false, // the constraint is contradictory, so includes nothing
+		},
+		{
 			MustMakeSet(MeetingConstraintsStringRuby(">= 1.0.0")),
 			MustParseVersion("1.0.1"),
 			true,

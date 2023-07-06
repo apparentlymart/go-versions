@@ -382,6 +382,14 @@ func TestMeetingConstraintsRuby(t *testing.T) {
 				All.Subtract(Only(MustParseVersion(`1.0.0`))),
 			),
 		},
+		{
+			`1.0.0-beta1, != 1.0.0-beta1`, // degenerate empty set with prerelease versions
+			Intersection(
+				Released,
+				Only(MustParseVersion(`1.0.0-beta1`)),
+				All.Subtract(Only(MustParseVersion(`1.0.0-beta1`))),
+			),
+		},
 	}
 
 	for _, test := range tests {
