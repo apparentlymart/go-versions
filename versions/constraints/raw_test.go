@@ -1,9 +1,8 @@
 package constraints
 
 import (
+	"reflect"
 	"testing"
-
-	"github.com/kylelemons/godebug/pretty"
 )
 
 func TestScanConstraints(t *testing.T) {
@@ -348,8 +347,8 @@ func TestScanConstraints(t *testing.T) {
 				t.Errorf("wrong remain\ngot:  %q\nwant: %q", remain, test.WantRemain)
 			}
 
-			if diff := pretty.Compare(test.Want, got); diff != "" {
-				t.Errorf("wrong result\n%s", diff)
+			if !reflect.DeepEqual(test.Want, got) {
+				t.Errorf("wrong result want %#v, got %#v", test.Want, got)
 			}
 		})
 	}

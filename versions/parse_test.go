@@ -3,8 +3,6 @@ package versions
 import (
 	"reflect"
 	"testing"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 func TestMeetingConstraintsCanon(t *testing.T) {
@@ -259,7 +257,7 @@ func TestMeetingConstraintsCanon(t *testing.T) {
 				} else {
 					// Sometimes our GoString implementations hide differences that
 					// DeepEqual thinks are significant.
-					t.Errorf("wrong result\ngot:  %swant: %s", spew.Sdump(got), spew.Sdump(test.Want))
+					t.Errorf("wrong result\ngot:  %+vwant: %+v", got, test.Want)
 				}
 			}
 		})
@@ -407,7 +405,7 @@ func TestMeetingConstraintsRuby(t *testing.T) {
 				} else {
 					// Sometimes our GoString implementations hide differences that
 					// DeepEqual thinks are significant.
-					t.Errorf("wrong result\ngot:  %swant: %s", spew.Sdump(got), spew.Sdump(test.Want))
+					t.Errorf("wrong result\ngot:  %+vwant: %+v", got, test.Want)
 				}
 			}
 		})
