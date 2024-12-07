@@ -18,21 +18,21 @@ import (
 // version. The following is an example of a complex constraint string
 // illustrating all of these features:
 //
-//     >=1.0.0 <2.0.0 || 1.0.0-beta1 || =2.0.2
+//	>=1.0.0 <2.0.0 || 1.0.0-beta1 || =2.0.2
 //
 // In practice constraint strings are usually simpler than this, but this
 // complex example allows us to identify each of the parts by example:
 //
-//     Selection Sets:     ">=1.0.0 <2.0.0"
-//                         "1.0.0-beta1"
-//                         "=2.0.2"
-//     Selections:         ">=1.0.0"
-//                         "<2.0.0"
-//                         "1.0.0-beta1"
-//                         "=2.0.2"
-//     Matching Operators: ">=", "<", "=" are explicit operators
-//                         "1.0.0-beta1" has an implicit "=" operator
-//     Boundary Versions:  "1.0.0", "2.0.0", "1.0.0-beta1", "2.0.2"
+//	Selection Sets:     ">=1.0.0 <2.0.0"
+//	                    "1.0.0-beta1"
+//	                    "=2.0.2"
+//	Selections:         ">=1.0.0"
+//	                    "<2.0.0"
+//	                    "1.0.0-beta1"
+//	                    "=2.0.2"
+//	Matching Operators: ">=", "<", "=" are explicit operators
+//	                    "1.0.0-beta1" has an implicit "=" operator
+//	Boundary Versions:  "1.0.0", "2.0.0", "1.0.0-beta1", "2.0.2"
 //
 // A constraint string describes the members of a version set by adding exact
 // versions or ranges of versions to that set. A version is in the set if
@@ -48,14 +48,14 @@ import (
 //
 // The available matching operators are:
 //
-//     <  Less than
-//     <= Less than or equal
-//     >  Greater than
-//     >= Greater than or equal
-//     =  Equal
-//     !  Not equal
-//     ~  Greater than with implied upper limit (described below)
-//     ^  Greater than excluding new major releases (described below)
+//	<  Less than
+//	<= Less than or equal
+//	>  Greater than
+//	>= Greater than or equal
+//	=  Equal
+//	!  Not equal
+//	~  Greater than with implied upper limit (described below)
+//	^  Greater than excluding new major releases (described below)
 //
 // If no operator is specified, the operator is implied to be "equal" for a
 // full version specification, or a special additional "match" operator for
@@ -68,11 +68,11 @@ import (
 // if two or three segments are specified then only patch versions are accepted.
 // For example:
 //
-//     ~1     is equivalent to >=1.0.0 <2.0.0
-//     ~1.0   is equivalent to >=1.0.0 <1.1.0
-//     ~1.2   is equivalent to >=1.2.0 <1.3.0
-//     ~1.2.0 is equivalent to >=1.2.0 <1.3.0
-//     ~1.2.3 is equivalent to >=1.2.3 <1.3.0
+//	~1     is equivalent to >=1.0.0 <2.0.0
+//	~1.0   is equivalent to >=1.0.0 <1.1.0
+//	~1.2   is equivalent to >=1.2.0 <1.3.0
+//	~1.2.0 is equivalent to >=1.2.0 <1.3.0
+//	~1.2.3 is equivalent to >=1.2.3 <1.3.0
 //
 // The "^" matching operator is similar to "~" except that it always constrains
 // only the major version number. It has an additional special behavior for
@@ -81,20 +81,20 @@ import (
 // development releases mark breaking changes by incrementing the minor version.
 // For example:
 //
-//     ^1     is equivalent to >=1.0.0 <2.0.0
-//     ^1.2   is equivalent to >=1.2.0 <2.0.0
-//     ^1.2.3 is equivalent to >=1.2.3 <2.0.0
-//     ^0.1.0 is equivalent to >=0.1.0 <0.2.0
-//     ^0.1.2 is equivalent to >=0.1.2 <0.2.0
+//	^1     is equivalent to >=1.0.0 <2.0.0
+//	^1.2   is equivalent to >=1.2.0 <2.0.0
+//	^1.2.3 is equivalent to >=1.2.3 <2.0.0
+//	^0.1.0 is equivalent to >=0.1.0 <0.2.0
+//	^0.1.2 is equivalent to >=0.1.2 <0.2.0
 //
 // The boundary version can contain wildcards for the major, minor or patch
 // segments, which are specified using the markers "*", "x", or "X". When used
 // in a selection with no explicit operator, these specify the implied "match"
 // operator and define ranges with similar meaning to the "~" and "^" operators:
 //
-//     1.*    is equivalent to >=1.0.0 <2.0.0
-//     1.*.*  is equivalent to >=1.0.0 <2.0.0
-//     1.0.*  is equivalent to >=1.0.0 <1.1.0
+//	1.*    is equivalent to >=1.0.0 <2.0.0
+//	1.*.*  is equivalent to >=1.0.0 <2.0.0
+//	1.0.*  is equivalent to >=1.0.0 <1.1.0
 //
 // When wildcards are used, the first segment specified as a wildcard implies
 // that all of the following segments are also wildcards. A version
@@ -107,8 +107,8 @@ import (
 // Explicit range syntax  using a hyphen creates inclusive upper and lower
 // bounds:
 //
-//     1.0.0 - 2.0.0 is equivalent to >=1.0.0 <=2.0.0
-//     1.2.3 - 2.3.4 is equivalent to >=1.2.3 <=2.3.4
+//	1.0.0 - 2.0.0 is equivalent to >=1.0.0 <=2.0.0
+//	1.2.3 - 2.3.4 is equivalent to >=1.2.3 <=2.3.4
 //
 // Requests of exact pre-release versions with the equals operator have
 // no special meaning to the constraint parser, but are interpreted as explicit
