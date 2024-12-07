@@ -61,7 +61,12 @@ func TestParseRubyStyle(t *testing.T) {
 		{
 			"v1.0.0",
 			SelectionSpec{},
-			`a "v" prefix should not be used`,
+			`a "v" prefix should not be used when specifying versions`,
+		},
+		{
+			">= v1.0.0",
+			SelectionSpec{},
+			`a "v" prefix should not be used when specifying versions`,
 		},
 		{
 			"1.0.0-beta2",
@@ -381,7 +386,12 @@ func TestParseRubyStyleMulti(t *testing.T) {
 		{
 			"~> v1.1.1",
 			nil,
-			`a "v" prefix should not be used`,
+			`invalid specification "~> v1.1.1": a "v" prefix should not be used when specifying versions`,
+		},
+		{
+			">= 1.0, < v2.0",
+			nil,
+			`invalid specification "< v2.0": a "v" prefix should not be used when specifying versions`,
 		},
 		{
 			">= 1.0, < 2",

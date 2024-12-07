@@ -4,6 +4,16 @@ package constraints
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[Unconstrained-0]
+	_ = x[ConstrainedMajor-1]
+	_ = x[ConstrainedMinor-2]
+	_ = x[ConstrainedPatch-3]
+}
+
 const _ConstraintDepth_name = "UnconstrainedConstrainedMajorConstrainedMinorConstrainedPatch"
 
 var _ConstraintDepth_index = [...]uint8{0, 13, 29, 45, 61}

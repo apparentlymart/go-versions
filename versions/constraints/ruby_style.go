@@ -85,7 +85,7 @@ func ParseRubyStyleMulti(str string) (IntersectionSpec, error) {
 
 		if remain != "" {
 			if strings.HasPrefix(remain, "v") {
-				return nil, fmt.Errorf(`a "v" prefix should not be used`)
+				return nil, fmt.Errorf(`a "v" prefix should not be used when specifying versions`)
 			}
 			if !strings.HasPrefix(remain, ",") {
 				return nil, fmt.Errorf("missing comma after %q", consumed)
@@ -147,6 +147,9 @@ func parseRubyStyle(str string) (SelectionSpec, string, error) {
 			return spec, remain, fmt.Errorf("extraneous spaces at start of specification")
 		}
 	default:
+		if strings.ContainsRune(raw.sep, 'v') {
+			return spec, remain, fmt.Errorf(`a "v" prefix should not be used when specifying versions`)
+		}
 		if raw.op == "" {
 			return spec, remain, fmt.Errorf("extraneous spaces at start of specification")
 		} else {

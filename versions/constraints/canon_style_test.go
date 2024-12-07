@@ -651,6 +651,21 @@ func TestParse(t *testing.T) {
 			nil,
 			`invalid constraint operator "&"`,
 		},
+		{
+			"=v1.0.0",
+			nil,
+			`a "v" prefix should not be used when specifying versions`,
+		},
+		{
+			"v1.0.0",
+			nil,
+			`a "v" prefix should not be used when specifying versions`,
+		},
+		{
+			">=v1.0.0",
+			nil,
+			`a "v" prefix should not be used when specifying versions`,
+		},
 	}
 
 	for _, test := range tests {

@@ -29,6 +29,9 @@ func ParseExactVersion(vs string) (VersionSpec, error) {
 		// Empty operator is okay as long as we don't also have separator spaces.
 		// (Caller can trim off spaces beforehand if they want to tolerate this.)
 		if raw.sep != "" {
+			if strings.ContainsRune(raw.sep, 'v') {
+				return spec, fmt.Errorf(`a "v" prefix should not be used`)
+			}
 			return spec, fmt.Errorf("extraneous spaces at start of specification")
 		}
 	default:

@@ -262,6 +262,8 @@ func parseSelection(str string) (SelectionSpec, string, error) {
 	if len(str) == len(remain) {
 		if len(remain) > 0 && remain[0] == 'v' {
 			// User seems to be trying to use a "v" prefix, like "v1.0.0"
+			// (This only catches this for operator-less specs; there's a
+			// more general check for this below too.)
 			return spec, remain, fmt.Errorf(`a "v" prefix should not be used when specifying versions`)
 		}
 
@@ -308,6 +310,9 @@ func parseSelection(str string) (SelectionSpec, string, error) {
 	}
 
 	if raw.sep != "" {
+		if strings.ContainsRune(raw.sep, 'v') {
+			return spec, remain, fmt.Errorf(`a "v" prefix should not be used when specifying versions`)
+		}
 		return spec, remain, fmt.Errorf("no spaces allowed after operator %q", raw.op)
 	}
 

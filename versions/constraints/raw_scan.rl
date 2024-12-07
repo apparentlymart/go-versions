@@ -76,7 +76,7 @@ func scanConstraint(data string) (rawConstraint, string) {
 
 		op = ((any - (digit | space | alpha | '.' | '*'))**) >ts %finishOp %err(finishOp) %eof(finishOp);
 		likelyOp = ('^' | '>' | '<' | '-' | '~' | '!');
-		sep = (space**) >ts %finishSep %err(finishSep) %eof(finishSep);
+		sep = ((space | 'v')**) >ts %finishSep %err(finishSep) %eof(finishSep);
 		nums = (num ('.' num)*);
 		extraStr = (alnum | '.' | '-')+;
 		pre = ('-' extraStr) >ts %finishPre %err(finishPre) %eof(finishPre);

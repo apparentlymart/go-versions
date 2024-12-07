@@ -4,6 +4,22 @@ package constraints
 
 import "strconv"
 
+func _() {
+	// An "invalid array index" compiler error signifies that the constant values have changed.
+	// Re-run the stringer command to generate them again.
+	var x [1]struct{}
+	_ = x[OpUnconstrained-0]
+	_ = x[OpGreaterThan-62]
+	_ = x[OpLessThan-60]
+	_ = x[OpGreaterThanOrEqual-8805]
+	_ = x[OpGreaterThanOrEqualPatchOnly-126]
+	_ = x[OpGreaterThanOrEqualMinorOnly-94]
+	_ = x[OpLessThanOrEqual-8804]
+	_ = x[OpEqual-61]
+	_ = x[OpNotEqual-8800]
+	_ = x[OpMatch-42]
+}
+
 const (
 	_SelectionOp_name_0 = "OpUnconstrained"
 	_SelectionOp_name_1 = "OpMatch"
